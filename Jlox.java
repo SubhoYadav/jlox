@@ -10,13 +10,38 @@ public class Jlox {
     static boolean hadError = false;
 
     private static void run(String source) {
-        // @TODO: define the "lexer" & "token" classes
-        // Lexer lexer = new Lexer(source);
-        // List<Token> tokens = lexer.scanTokens();
+        Lexer lexer = new Lexer(source);
+        List<Token> tokens = lexer.scanTokens();
 
-        // for (Token token : tokens) {
-            // System.out.println(token);
-        // }
+        /*
+            for (Token token : tokens) {
+                System.out.println(token.toString());
+            }
+        */
+
+        Parser parser = new Parser(tokens);
+        Expr parsedExpression = parser.startParsing();
+
+        /*
+            Expr parsedExpression = new Expr.Binary(
+                new Expr.Literal(2), 
+                new Token(TokenType.PLUS, null, 1, "+"), 
+                new Expr.Literal(3)
+            );
+        */
+
+        /*
+            parsedExpression = new Expr.Binary(
+                new Expr.Unary(
+                    new Token(TokenType.MINUS, null, 1, "-"),
+                    new Expr.Literal(123)),
+                new Token(TokenType.STAR, null, 1, "*"),
+                new Expr.Grouping(
+                    new Expr.Literal(45.67)));
+        */
+
+        Expr.PNPrinter pnPrinter = new Expr.PNPrinter();
+        System.out.println(pnPrinter.print(parsedExpression));
     }
 
     private static void runFile(String path) throws IOException {
@@ -42,8 +67,23 @@ public class Jlox {
         }
     }
 
+    /**
+     * This method is used to report errors in the lexer/tokenizer
+     */
     static void error (int line, String message) {
         report(line, "", message);
+    }
+
+    /**
+     * This is the polymorphered error function that reports errors in the parser
+     */
+    static void error(Token token, String message) {
+        if (token.tokenType == TokenType.EOF) {
+            report(token.line, " at end ", message);
+        }
+        else {
+            report(token.line, " at " + token.lexeme + "'", message);
+        }
     }
 
     private static void report(int line, String where, String message) {

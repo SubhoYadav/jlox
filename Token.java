@@ -12,6 +12,6 @@ public class Token {
     }
 
     public String toString () {
-        return tokenType + " " + lexeme + " " + literal;
+        return "Token Type: " + tokenType + " and " + "Lexeme: " + lexeme + " and " + "Literal: " + literal + " and " + "Line: " + line;
     }
 }

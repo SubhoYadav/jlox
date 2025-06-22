@@ -1,7 +1,7 @@
 public enum TokenType {
     // single character token
     LEFT_PARENTHESIS, RIGHT_PARENTHESIS, DOT, COMMA, SEMI_COLON,
-    LEFT_BRACE, RIGHT_BRACE, 
+    LEFT_BRACE, RIGHT_BRACE, BANG, GREATER, LESSER, EQUALS,
 
     // arithmetic operators
     STAR, SLASH, PLUS, MINUS,
@@ -9,9 +9,9 @@ public enum TokenType {
     // Literals
     IDENTIFIER, NUMBER, STRING,
 
-    //Operators or 2 character tokens
-    BANG, BANG_EQUALS, GREATER, GREATER_EQUALS,
-    LESSER, LESSER_EQUALS,
+    // 2 character tokens
+    BANG_EQUALS, GREATER_EQUALS,
+    LESSER_EQUALS, EQUALS_EQUALS,
 
     // Keywords.
     AND, CLASS, ELSE, FALSE, FUN, FOR, IF, NIL, OR,
