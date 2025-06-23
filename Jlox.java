@@ -8,6 +8,7 @@ import java.util.List;
 
 public class Jlox {
     static boolean hadError = false;
+    static boolean hadRuntimeError = false;
 
     private static void run(String source) {
         Lexer lexer = new Lexer(source);
@@ -21,6 +22,9 @@ public class Jlox {
 
         Parser parser = new Parser(tokens);
         Expr parsedExpression = parser.startParsing();
+
+        // interpret the AST
+        new Expr.Interpreter().interpret(parsedExpression);
 
         /*
             Expr parsedExpression = new Expr.Binary(
@@ -40,8 +44,8 @@ public class Jlox {
                     new Expr.Literal(45.67)));
         */
 
-        Expr.PNPrinter pnPrinter = new Expr.PNPrinter();
-        System.out.println(pnPrinter.print(parsedExpression));
+        // Expr.PNPrinter pnPrinter = new Expr.PNPrinter();
+        // System.out.println(pnPrinter.print(parsedExpression));
     }
 
     private static void runFile(String path) throws IOException {
@@ -49,6 +53,8 @@ public class Jlox {
         run(new String(bytes, Charset.defaultCharset()));
 
         if (hadError) System.exit(65);
+
+        if (hadRuntimeError) System.exit(70); 
     }
 
     private static void runPrompt() throws IOException {
@@ -84,6 +90,13 @@ public class Jlox {
         else {
             report(token.line, " at " + token.lexeme + "'", message);
         }
+    }
+
+    static void runtimeError (RuntimeError error) {
+        System.err.println(error.getMessage() +
+        "\n" + "[line: " + error.token.line + "]");
+
+        hadRuntimeError = true;
     }
 
     private static void report(int line, String where, String message) {

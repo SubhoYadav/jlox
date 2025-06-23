@@ -70,13 +70,19 @@ public class Parser {
     }
 
     public Expr startParsing() {
-        return expression();
+        try {
+            return expression();
+        }
+        catch (ParserError err) {
+            return null;
+        }
     }
 
     private Expr expression () {
         // expression := equality 
         return equality();
     }
+    
 
     private Expr equality () {
         Expr expr = comparison();
