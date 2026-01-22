@@ -1,0 +1,22 @@
+// this is a comment
+(( )){} // grouping stuff
+!*+-/=<> <= == // operators
+"subho Yadav"
+==
+"Subho Yadav"
+
+// lox supports multiline strings
+
+"
+Subho is a SE
+
+He works at GIDE.ai
+"
+
+123
+
+123.879
+
+while;
+
+user_name;

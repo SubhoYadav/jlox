@@ -19,7 +19,7 @@ package com.jlox;
     program := (statement)*EOF
     statement := exprStmt | printStmt
     exprStmt := expression";"
-    printStmt := "print" statement ";"
+    printStmt := "print" exprStmt ";"
     expression := equality
     equality := comparison (('!=', '==', '?')comparison)*
     comparison := term (('>', '>=', '<', '<=')term)* | term ':' term
@@ -30,6 +30,7 @@ package com.jlox;
 
 */
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Parser {
@@ -63,6 +64,11 @@ public class Parser {
         return peek().tokenType == type;
     }
 
+    /**
+     * This method also consumes the current token, if the curr token matches with any of the provided tokens
+     * @param types: tokens to match the "curr" token with
+     * @return true/false
+     */
     private boolean match(TokenType ...types) {
         for (TokenType type : types) {
             if (check(type)) {
@@ -74,13 +80,30 @@ public class Parser {
         return false;
     }
 
-    public Expr startParsing() {
+    public List<Stmt> startParsing() {
         try {
-            return expression();
+            List<Stmt> statements = new ArrayList<>();
+
+            while (!isAtEnd()) {
+                statements.add(statement());
+            }
+
+            return statements;
         }
         catch (ParserError err) {
             return null;
         }
+    }
+
+    private Stmt statement () {
+        if (match(TokenType.PRINT)) {
+            Expr expr = expression();
+            consume(TokenType.SEMI_COLON, "Expected ; at the end of a statement");
+            return new Stmt.PrintStmt(expr);
+        }
+
+        Expr expr = expression();
+        return new Stmt.ExprStmt(expr);
     }
 
     private Expr expression () { 
