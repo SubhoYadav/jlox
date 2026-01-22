@@ -1,0 +1,4 @@
+print 5 > 1 ? "5 is greater than 1" : "1 is less than 5";
+
+print "subho Yadav made this interpreter";
+print 2 + 2;

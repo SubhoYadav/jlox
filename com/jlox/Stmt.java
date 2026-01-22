@@ -1,0 +1,36 @@
+package com.jlox;
+
+// The child classes needs to be static so that they can be instantiated without the reference of the outer class 'Stmt'
+
+public abstract class Stmt {
+  public interface Visitor<T> {
+    T visitExprStmt(ExprStmt expressionStatement);
+    T visitPrintStmt(PrintStmt expressionStatement);
+  }
+
+  abstract<R> R accept(Visitor<R> visitor);
+
+  static class ExprStmt extends Stmt {
+    public <R> R accept(Visitor<R> visitor) {
+      return visitor.visitExprStmt(this);
+    }
+
+    ExprStmt (Expr _expression) {
+      this.expression = _expression;
+    }
+
+    final Expr expression;
+  }
+
+  static class PrintStmt extends Stmt {
+    public <R> R accept(Visitor<R> visitor) {
+      return visitor.visitPrintStmt(this);
+    }
+
+    PrintStmt(Expr _expression) {
+      this.expression = _expression;
+    }
+
+    final Expr expression;
+  }
+}
