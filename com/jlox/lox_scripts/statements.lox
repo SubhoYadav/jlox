@@ -1,3 +1,11 @@
+
+print 2 * 5 + 3;
+print "subho Yadav";
+
+// Below code is not yet supported by Jlox
+// 5 > 1 ? print "5 is greater than 1" : "1 is less than 5";
+
+// This is valid
 print 5 > 1 ? "5 is greater than 1" : "1 is less than 5";
 
 print "subho Yadav made this interpreter";
