@@ -5,7 +5,8 @@ package com.jlox;
 public abstract class Stmt {
   public interface Visitor<T> {
     T visitExprStmt(ExprStmt expressionStatement);
-    T visitPrintStmt(PrintStmt expressionStatement);
+    T visitPrintStmt(PrintStmt printStmttatement);
+    T visitVarDecStmt(VarDecStmt varDecStatement);
   }
 
   abstract<R> R accept(Visitor<R> visitor);
@@ -32,5 +33,19 @@ public abstract class Stmt {
     }
 
     final Expr expression;
+  }
+
+  static class VarDecStmt extends Stmt {
+    public <R> R accept (Visitor<R> visitor) {
+      return visitor.visitVarDecStmt(this);
+    }
+
+    VarDecStmt(Token _name, Expr _initialiser) {
+      this.name = _name;
+      this.initialiser = _initialiser;
+    }
+
+    final Token name;
+    final Expr initialiser;
   }
 }

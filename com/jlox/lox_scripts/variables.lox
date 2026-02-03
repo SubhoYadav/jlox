@@ -1,0 +1,7 @@
+var x = 25;
+var y = 5;
+var z = x + y;
+print "value of x is ";
+print x;
+print y;
+print z;

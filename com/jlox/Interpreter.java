@@ -2,10 +2,16 @@ package com.jlox;
 
 import java.util.List;
 
+import com.jlox.Expr.Variable;
+import com.jlox.Stmt.VarDecStmt;
+
 // The interpreter is implemented as a Visitor according to the Visitor pattern
 // Interpreter to evaluate syntax tree nodes of each type
-// Its tree-walking the interpreter in post-order traversl scheme
+// Its tree-walking the interpreter in post-order traversal scheme
 public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
+
+  private Environment environment = new Environment();
+
   public void interpret (List<Stmt> statements) {
       try {
         for (Stmt statement : statements) {
@@ -30,6 +36,22 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     Object value = evaluate(printStmt.expression);
     System.out.println(stringify(value));
     return null;
+  }
+
+  @Override
+  public Void visitVarDecStmt(VarDecStmt varDecStatement) {
+      Object initialiser = null;
+      if (varDecStatement.initialiser != null) {
+        initialiser = evaluate(varDecStatement.initialiser);
+      }
+
+      environment.define(varDecStatement.name, initialiser);
+      return null;
+  }
+
+  @Override
+  public Object visitVariable(Variable expression) {
+      return environment.get(expression.name);
   }
 
   @Override

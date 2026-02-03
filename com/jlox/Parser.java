@@ -16,7 +16,10 @@ package com.jlox;
     STRING, true, false, nil, grouped expressions etc
 
     Based on the above rules, here is the lox language's grammar
-    program := (statement)*EOF
+    program := (declaration)*EOF
+    declaration := variableDeclaration | statement
+    variableDeclaration := "var" IDENTIFIER ("=" expression)? ";"
+
     statement := exprStmt | printStmt
     exprStmt := expression";"
     printStmt := "print" exprStmt ";"
@@ -26,7 +29,7 @@ package com.jlox;
     term := factor (('+', '-')factor)*
     factor := unary (('*', '/')unary)*
     unary := ('!', '-')unary | primary
-    primary := NUMBER | STRING | '(' expression ')' | "true" | "false" | "nil"
+    primary := NUMBER | STRING | '(' expression ')' | "true" | "false" | "nil" | IDENTIFIER
 
 */
 
@@ -85,7 +88,7 @@ public class Parser {
             List<Stmt> statements = new ArrayList<>();
 
             while (!isAtEnd()) {
-                statements.add(statement());
+                statements.add(declaration());
             }
 
             return statements;
@@ -93,6 +96,26 @@ public class Parser {
         catch (ParserError err) {
             return null;
         }
+    }
+
+    private Stmt declaration () {
+        if (match(TokenType.VAR)) {
+            return variableDeclaration();
+        }
+
+        return statement();
+    }
+
+    private Stmt variableDeclaration() {
+        Token name = consume(TokenType.IDENTIFIER, "Expect variable name.");
+
+        Expr initialiser = null;
+        if (match(TokenType.EQUALS)) {
+            initialiser = expression();
+        }
+
+        consume(TokenType.SEMI_COLON, "Expected ; after variable declaration");
+        return new Stmt.VarDecStmt(name, initialiser);
     }
 
     private Stmt statement () {
@@ -200,14 +223,17 @@ public class Parser {
             consume(TokenType.RIGHT_PARENTHESIS, "Expected ')' after an expression.");
             return new Expr.Grouping(expr);
         }
+        else if (match(TokenType.IDENTIFIER)) {
+            return new Expr.Variable(previous());
+        }
 
         return null;
     }
 
-    private void consume (TokenType tokenType, String message) {
+    private Token consume (TokenType tokenType, String message) {
         if (check(tokenType)) {
             advance();
-            return;
+            return previous();
         }
 
         throw error(peek(), message);

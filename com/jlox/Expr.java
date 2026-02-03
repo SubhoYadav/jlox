@@ -8,89 +8,12 @@ public abstract class Expr {
       T visitGrouping(Grouping expression);
       T visitLiteral(Literal expression);
       T visitTernary(Ternary expression);
+      T visitVariable(Variable expression);
    }
 
    // Below method is an abstract one, so all the sub classes that extends this base class, needs to define its body
    // and this will select the proper visitor method based on the 'Expr' object it is called from. 
    abstract<R> R accept(Visitor<R> visitor);
-
-   // Polish(prefix) Notation printer visitor
-   static class PNPrinter implements Expr.Visitor<String> {
-      public String print(Expr expression) {
-         return expression.accept(this); // "this" => PNPrinter visitor class object
-      }
-
-      @Override
-      public String visitBinary(Expr.Binary expression) {
-         StringBuilder builder = new StringBuilder();
-         builder.append("(").append(expression.operator.lexeme);
-
-         builder.append(parenthesise(expression.left, expression.right));
-
-         builder.append(")");
-
-         return builder.toString();
-      }
-
-      @Override
-      public String visitUnary(Expr.Unary expression) {
-         
-         StringBuilder builder = new StringBuilder();
-         builder.append("(").append(expression.operator.lexeme);
-
-         builder.append(parenthesise(expression.expression));
-
-         builder.append(")");
-
-         return builder.toString();
-      }
-
-      @Override
-      public String visitGrouping(Expr.Grouping expression) {
-         StringBuilder builder = new StringBuilder();
-         builder.append("(").append("group");
-
-         builder.append(parenthesise(expression.expression));
-
-         builder.append(")");
-
-         return builder.toString();
-      }
-
-      @Override
-      public String visitLiteral(Expr.Literal expression) {
-         if (expression.value == null) return "nil";
-         else return " " + expression.value.toString() + " ";
-      }
-
-      private String parenthesise(Expr ...exprs) {
-         StringBuilder builder = new StringBuilder();
-
-         for (Expr expr : exprs) {
-            builder.append(expr.accept(this));
-         }
-
-         return builder.toString();
-      }
-
-      @Override
-      public String visitTernary(Expr.Ternary expression) {
-         StringBuilder builder = new StringBuilder();
-         builder.append("ternary { ");
-
-         builder.append(parenthesise(expression.conditional));
-         builder.append(" ? ");
-
-         builder.append(parenthesise(expression.trueBranch));
-         builder.append(" : ");
-
-         builder.append(parenthesise(expression.falseBranch));
-
-         builder.append(" }");
-
-         return builder.toString();
-      }
-   }
 
    static class Binary extends Expr {
       @Override
@@ -160,5 +83,17 @@ public abstract class Expr {
       final Expr conditional;
       final Expr trueBranch;
       final Expr falseBranch;
+   }
+
+   static class Variable extends Expr {
+      public <R> R accept(Visitor<R> visitor) {
+         return visitor.visitVariable(this);
+      }
+
+      Variable(Token _name) {
+         this.name = _name;
+      }
+
+      final Token name;
    }
 }
