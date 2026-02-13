@@ -5,3 +5,8 @@ print "value of x is ";
 print x;
 print y;
 print z;
+
+var x = "Subho";
+print x;
+x = "Subho Yadav";
+print x;

@@ -9,6 +9,7 @@ public abstract class Expr {
       T visitLiteral(Literal expression);
       T visitTernary(Ternary expression);
       T visitVariable(Variable expression);
+      T visitAssignment(Assignment assignment);
    }
 
    // Below method is an abstract one, so all the sub classes that extends this base class, needs to define its body
@@ -95,5 +96,19 @@ public abstract class Expr {
       }
 
       final Token name;
+   }
+
+   static class Assignment extends Expr {
+      public <R> R accept(Visitor<R> visitor) {
+         return visitor.visitAssignment(this);
+      }
+
+      Assignment(Token _name, Expr _expression) {
+         this.name = _name;
+         this.expression = _expression;
+      }
+
+      final Token name;
+      final Expr expression;
    }
 }

@@ -2,6 +2,7 @@ package com.jlox;
 
 import java.util.List;
 
+import com.jlox.Expr.Assignment;
 import com.jlox.Expr.Variable;
 import com.jlox.Stmt.VarDecStmt;
 
@@ -21,7 +22,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
       catch (RuntimeError error) {
         Jlox.runtimeError(error);
       }
-  } 
+  }
 
   
 
@@ -54,6 +55,13 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
       return environment.get(expression.name);
   }
 
+  @Override
+  public Object visitAssignment(Assignment assignment) {
+    // evaluate the expression in the assignment statement and put the value in the target which may be a variable
+    Object value = evaluate(assignment.expression);
+    environment.assign(assignment.name, value);
+    return value;
+  }
   @Override
   public Object visitBinary(Expr.Binary expression) {
       Object left = evaluate(expression.left);
@@ -193,6 +201,6 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
    * This method directs the expression to its visitor method in order to evaluate it
    */
   private Object evaluate(Expr expression) {
-      return expression.accept(this);
+    return expression.accept(this);
   }
 }

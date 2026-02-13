@@ -1,5 +1,7 @@
 package com.jlox;
 
+import com.jlox.Expr.Assignment;
+
 // Polish(prefix) Notation printer visitor
 // This visitor is used to verify whether the Parser is generating trees that follow the correct precedence and associativity of arithmetic expressions
 public class PNPrinter implements Expr.Visitor<String> {
@@ -58,6 +60,10 @@ public class PNPrinter implements Expr.Visitor<String> {
         return " " + expression.name.lexeme + " ";
     }
 
+    @Override
+    public String visitAssignment(Assignment assignment) {
+        return "To be implemented";
+    }
     private String parenthesise(Expr ...exprs) {
         StringBuilder builder = new StringBuilder();
 

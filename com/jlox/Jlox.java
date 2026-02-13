@@ -23,7 +23,6 @@ public class Jlox {
         
         Parser parser = new Parser(tokens);
         List<Stmt> statements = parser.startParsing();
-
         if (hadError) {
             // There is some error while parsing the lox code, AST is not generated propperly
             // Do not attempt to interpret this AST.

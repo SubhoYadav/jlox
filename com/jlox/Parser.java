@@ -23,7 +23,8 @@ package com.jlox;
     statement := exprStmt | printStmt
     exprStmt := expression";"
     printStmt := "print" exprStmt ";"
-    expression := equality
+    expression := assignment
+    assignment := IDENTIFIER '=' expression | equality
     equality := comparison (('!=', '==', '?')comparison)*
     comparison := term (('>', '>=', '<', '<=')term)* | term ':' term
     term := factor (('+', '-')factor)*
@@ -87,10 +88,9 @@ public class Parser {
         try {
             List<Stmt> statements = new ArrayList<>();
 
-            while (!isAtEnd()) {
+            while (!isAtEnd()) {    
                 statements.add(declaration());
             }
-
             return statements;
         }
         catch (ParserError err) {
@@ -126,11 +126,30 @@ public class Parser {
         }
 
         Expr expr = expression();
+        consume(TokenType.SEMI_COLON, "Expected ; at the end of a statement");
         return new Stmt.ExprStmt(expr);
     }
 
     private Expr expression () { 
-        return ternary();
+        return assignment();
+    }
+
+    private Expr assignment() {
+        Expr expression = ternary();
+
+        if (match(TokenType.EQUALS)) {
+            Token equalSymbol = previous(); 
+            Expr value = assignment();
+
+            if (expression instanceof Expr.Variable) {
+                Token name = ((Expr.Variable)expression).name;
+                return new Expr.Assignment(name, value);    
+            }
+
+            error(equalSymbol, "Assignment target should be a variable");
+        }
+
+        return expression;
     }
     
     private Expr ternary () {
