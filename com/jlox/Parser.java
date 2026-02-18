@@ -20,12 +20,15 @@ package com.jlox;
     declaration := variableDeclaration | statement
     variableDeclaration := "var" IDENTIFIER ("=" expression)? ";"
 
-    statement := exprStmt | printStmt | blockStmt
+    statement := exprStmt | printStmt | blockStmt | ifStmt
 
     exprStmt := expression";"
     printStmt := "print" exprStmt ";"
 
     blockStmt := '{' (statements)* '}'
+
+    ifStmt := 'IF' '('' expression ')' statement (ELSE statement)*
+
     expression := assignment
     assignment := IDENTIFIER '=' expression | equality
     equality := comparison (('!=', '==', '?')comparison)*
@@ -136,6 +139,22 @@ public class Parser {
 
             consume(TokenType.RIGHT_BRACE, "Expected } at the end of a block");
             return new Stmt.BlockStmt(blockStatementList);
+        }
+
+        if (match(TokenType.IF)) {
+            consume(TokenType.LEFT_PARENTHESIS, "Expected '(' after if ");
+            Expr conditional = expression();
+            consume(TokenType.RIGHT_PARENTHESIS, "Expected ')' after conditional expression ");
+
+            Stmt thenStatement = statement();
+
+            Stmt elseStatement = null;
+
+            if (match(TokenType.ELSE)) {
+                elseStatement = statement();
+            }
+
+            return new Stmt.IfStmt(conditional, thenStatement, elseStatement);
         }
 
         Expr expr = expression();

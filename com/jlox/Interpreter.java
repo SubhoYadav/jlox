@@ -5,6 +5,7 @@ import java.util.List;
 import com.jlox.Expr.Assignment;
 import com.jlox.Expr.Variable;
 import com.jlox.Stmt.BlockStmt;
+import com.jlox.Stmt.IfStmt;
 import com.jlox.Stmt.VarDecStmt;
 
 // The interpreter is implemented as a Visitor according to the Visitor pattern
@@ -56,6 +57,19 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     // create a new environment by passing the current environment as the "enclosing" parameter of the Environment class, thereby creating an environment chain, if the block statements nest
     Environment newEnvironment = new Environment(this.environment);
     executeBlock(blockStatement.blockStatementList, newEnvironment);
+    return null;
+  }
+
+  @Override
+  // Its a thin wrapper around java's if statement
+  public Void visitIfStmt(IfStmt ifStatement) {
+    if (isTruthy(evaluate(ifStatement.conditional))) {
+      execute(ifStatement.thenStatement);
+    }
+    else if (ifStatement.elseStatemeStmt != null) {
+      execute(ifStatement.elseStatemeStmt);
+    }
+
     return null;
   }
 

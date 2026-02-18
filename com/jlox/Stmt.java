@@ -10,6 +10,7 @@ public abstract class Stmt {
     T visitPrintStmt(PrintStmt printStmttatement);
     T visitVarDecStmt(VarDecStmt varDecStatement);
     T visitBlockStmt(BlockStmt  blockStatement);
+    T visitIfStmt(IfStmt  ifStatement);
   }
 
   abstract<R> R accept(Visitor<R> visitor);
@@ -62,6 +63,22 @@ public abstract class Stmt {
     }
 
     final List<Stmt> blockStatementList;
+  }
+
+  static class IfStmt extends Stmt {
+    public <R> R accept (Visitor<R> visitor) {
+      return visitor.visitIfStmt(this);
+    }
+
+    IfStmt(Expr _conditional, Stmt _thenStatement, Stmt _elseStatement) {
+      this.conditional = _conditional;
+      this.thenStatement = _thenStatement;
+      this.elseStatemeStmt = _elseStatement;
+    }
+
+    final Expr conditional;
+    final Stmt thenStatement;
+    final Stmt elseStatemeStmt;
   }
 
 }
