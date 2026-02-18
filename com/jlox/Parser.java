@@ -20,9 +20,12 @@ package com.jlox;
     declaration := variableDeclaration | statement
     variableDeclaration := "var" IDENTIFIER ("=" expression)? ";"
 
-    statement := exprStmt | printStmt
+    statement := exprStmt | printStmt | blockStmt
+
     exprStmt := expression";"
     printStmt := "print" exprStmt ";"
+
+    blockStmt := '{' (statements)* '}'
     expression := assignment
     assignment := IDENTIFIER '=' expression | equality
     equality := comparison (('!=', '==', '?')comparison)*
@@ -123,6 +126,16 @@ public class Parser {
             Expr expr = expression();
             consume(TokenType.SEMI_COLON, "Expected ; at the end of a statement");
             return new Stmt.PrintStmt(expr);
+        }
+
+        if (match(TokenType.LEFT_BRACE)) {
+            List<Stmt> blockStatementList = new ArrayList<>();
+            while (!check(TokenType.RIGHT_BRACE) && !isAtEnd()) {
+                blockStatementList.add(declaration());
+            }
+
+            consume(TokenType.RIGHT_BRACE, "Expected } at the end of a block");
+            return new Stmt.BlockStmt(blockStatementList);
         }
 
         Expr expr = expression();

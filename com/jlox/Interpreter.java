@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.jlox.Expr.Assignment;
 import com.jlox.Expr.Variable;
+import com.jlox.Stmt.BlockStmt;
 import com.jlox.Stmt.VarDecStmt;
 
 // The interpreter is implemented as a Visitor according to the Visitor pattern
@@ -48,6 +49,14 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
       environment.define(varDecStatement.name, initialiser);
       return null;
+  }
+
+  @Override
+  public Void visitBlockStmt(BlockStmt blockStatement) {
+    // create a new environment by passing the current environment as the "enclosing" parameter of the Environment class, thereby creating an environment chain, if the block statements nest
+    Environment newEnvironment = new Environment(this.environment);
+    executeBlock(blockStatement.blockStatementList, newEnvironment);
+    return null;
   }
 
   @Override
@@ -202,5 +211,21 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
    */
   private Object evaluate(Expr expression) {
     return expression.accept(this);
+  }
+
+  /**
+   * This method executes a block of statements by creating new environments and restring the previous environment when the block ends
+   */
+  private void executeBlock (List<Stmt> blockStatemetList, Environment newEnvironment) {
+    Environment oldEnvironment = this.environment;
+    try {
+      this.environment = newEnvironment;
+      for (Stmt statement : blockStatemetList) {
+        execute(statement);
+      }
+    }
+    finally {
+      this.environment = oldEnvironment;
+    }
   }
 }

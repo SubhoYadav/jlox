@@ -1,5 +1,7 @@
 package com.jlox;
 
+import java.util.List;
+
 // The child classes needs to be static so that they can be instantiated without the reference of the outer class 'Stmt'
 
 public abstract class Stmt {
@@ -7,6 +9,7 @@ public abstract class Stmt {
     T visitExprStmt(ExprStmt expressionStatement);
     T visitPrintStmt(PrintStmt printStmttatement);
     T visitVarDecStmt(VarDecStmt varDecStatement);
+    T visitBlockStmt(BlockStmt  blockStatement);
   }
 
   abstract<R> R accept(Visitor<R> visitor);
@@ -48,4 +51,17 @@ public abstract class Stmt {
     final Token name;
     final Expr initialiser;
   }
+
+  static class BlockStmt extends Stmt {
+    public <R> R accept (Visitor<R> visitor) {
+      return visitor.visitBlockStmt(this);
+    }
+
+    BlockStmt(List<Stmt> _blockStatementList) {
+      this.blockStatementList = _blockStatementList;
+    }
+
+    final List<Stmt> blockStatementList;
+  }
+
 }

@@ -6,7 +6,26 @@ print x;
 print y;
 print z;
 
+/*
 var x = "Subho";
+// print x;
+/* x = "Subho Yadav"; */
 print x;
-x = "Subho Yadav";
-print x;
+*/
+
+{
+  var name = "Subho";
+  print name;
+
+  {
+    var name = "Subho Yadav";
+
+    {
+      var name = "Puja";
+      print name;
+    }
+
+    print name;
+  }
+
+}
